@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Star } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 
 const testimonials = [
   {
@@ -31,6 +32,37 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  const next = useCallback(() => {
+    setDirection(1);
+    setCurrent((prev) => (prev + 1) % testimonials.length);
+  }, []);
+
+  const prev = useCallback(() => {
+    setDirection(-1);
+    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  }, []);
+
+  // Auto-rotate every 6 seconds
+  useEffect(() => {
+    const timer = setInterval(next, 6000);
+    return () => clearInterval(timer);
+  }, [next]);
+
+  const variants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 200 : -200,
+      opacity: 0,
+    }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({
+      x: dir < 0 ? 200 : -200,
+      opacity: 0,
+    }),
+  };
+
   return (
     <section className="py-24 md:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-6">
@@ -52,7 +84,8 @@ export default function Testimonials() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Desktop: grid view */}
+        <div className="hidden md:grid grid-cols-3 gap-8">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
@@ -60,7 +93,7 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="p-8 rounded-2xl bg-cream border border-sage-deep/50"
+              className="p-8 rounded-2xl bg-cream border border-sage-deep/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex gap-1 mb-4">
                 {Array.from({ length: t.rating }).map((_, j) => (
@@ -85,6 +118,87 @@ export default function Testimonials() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Mobile: carousel view */}
+        <div className="md:hidden relative">
+          <div className="overflow-hidden rounded-2xl min-h-[320px]">
+            <AnimatePresence custom={direction} mode="wait">
+              <motion.div
+                key={current}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="p-8 rounded-2xl bg-cream border border-sage-deep/50"
+              >
+                <div className="flex gap-1 mb-4">
+                  {Array.from({ length: testimonials[current].rating }).map(
+                    (_, j) => (
+                      <Star
+                        key={j}
+                        size={18}
+                        className="text-accent fill-accent"
+                      />
+                    )
+                  )}
+                </div>
+                <p className="text-slate leading-relaxed mb-6 italic">
+                  &ldquo;{testimonials[current].quote}&rdquo;
+                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-charcoal">
+                      {testimonials[current].name}
+                    </p>
+                    <p className="text-sm text-muted">
+                      {testimonials[current].location}
+                    </p>
+                  </div>
+                  <span className="inline-block px-3 py-1 rounded-full bg-sage text-primary text-xs font-medium">
+                    {testimonials[current].category}
+                  </span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Carousel controls */}
+          <div className="flex items-center justify-center gap-6 mt-6">
+            <button
+              onClick={prev}
+              className="w-10 h-10 rounded-full border border-sage-deep flex items-center justify-center text-slate hover:bg-sage hover:text-primary transition-colors"
+              aria-label="Previous testimonial"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <div className="flex gap-2">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setDirection(i > current ? 1 : -1);
+                    setCurrent(i);
+                  }}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    i === current
+                      ? "bg-primary w-6"
+                      : "bg-sage-deep hover:bg-muted"
+                  }`}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
+            <button
+              onClick={next}
+              className="w-10 h-10 rounded-full border border-sage-deep flex items-center justify-center text-slate hover:bg-sage hover:text-primary transition-colors"
+              aria-label="Next testimonial"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
       </div>
     </section>

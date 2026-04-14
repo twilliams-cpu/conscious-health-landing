@@ -19,6 +19,8 @@ const categories = [
     peptides: ["BPC-157", "TB-500"],
     color: "bg-emerald-50 text-emerald-700",
     iconBg: "bg-emerald-100",
+    hoverBorder: "hover:border-emerald-300",
+    glowColor: "group-hover:shadow-emerald-100",
   },
   {
     icon: Scale,
@@ -28,6 +30,8 @@ const categories = [
     peptides: ["Tirzepatide", "Semaglutide"],
     color: "bg-blue-50 text-blue-700",
     iconBg: "bg-blue-100",
+    hoverBorder: "hover:border-blue-300",
+    glowColor: "group-hover:shadow-blue-100",
   },
   {
     icon: Sparkles,
@@ -37,6 +41,8 @@ const categories = [
     peptides: ["GHK-Cu", "Epithalon"],
     color: "bg-amber-50 text-amber-700",
     iconBg: "bg-amber-100",
+    hoverBorder: "hover:border-amber-300",
+    glowColor: "group-hover:shadow-amber-100",
   },
   {
     icon: Heart,
@@ -46,6 +52,8 @@ const categories = [
     peptides: ["CJC-1295", "Ipamorelin"],
     color: "bg-rose-50 text-rose-700",
     iconBg: "bg-rose-100",
+    hoverBorder: "hover:border-rose-300",
+    glowColor: "group-hover:shadow-rose-100",
   },
   {
     icon: Brain,
@@ -55,6 +63,8 @@ const categories = [
     peptides: ["Selank", "Semax"],
     color: "bg-violet-50 text-violet-700",
     iconBg: "bg-violet-100",
+    hoverBorder: "hover:border-violet-300",
+    glowColor: "group-hover:shadow-violet-100",
   },
   {
     icon: Moon,
@@ -64,8 +74,26 @@ const categories = [
     peptides: ["DSIP", "Selank"],
     color: "bg-indigo-50 text-indigo-700",
     iconBg: "bg-indigo-100",
+    hoverBorder: "hover:border-indigo-300",
+    glowColor: "group-hover:shadow-indigo-100",
   },
 ];
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0, 0, 0.2, 1] as const },
+  },
+};
 
 export default function Benefits() {
   return (
@@ -91,18 +119,21 @@ export default function Benefits() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((cat, i) => (
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {categories.map((cat) => (
             <motion.div
               key={cat.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group relative p-8 rounded-2xl border border-sage-deep/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 bg-cream"
+              variants={cardVariants}
+              className={`group relative p-8 rounded-2xl border border-sage-deep/50 ${cat.hoverBorder} hover:shadow-xl ${cat.glowColor} transition-all duration-300 bg-cream hover:-translate-y-1`}
             >
               <div
-                className={`w-14 h-14 rounded-xl ${cat.iconBg} flex items-center justify-center mb-5`}
+                className={`w-14 h-14 rounded-xl ${cat.iconBg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
               >
                 <cat.icon size={26} className={cat.color.split(" ")[1]} />
               </div>
@@ -124,7 +155,7 @@ export default function Benefits() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

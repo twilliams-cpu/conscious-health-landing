@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #2D5A47;
-  --color-primary-light: #3D7A5F;
-  --color-primary-dark: #1B3D2F;
-  --color-accent: #D4A853;
-  --color-accent-light: #E4C883;
-  --color-accent-dark: #B8903D;
+  --color-primary: #1B4D3E;
+  --color-primary-light: #2D7A62;
+  --color-primary-dark: #0F2E24;
+  --color-accent: #B8860B;
+  --color-accent-light: #DAA520;
+  --color-accent-dark: #8B6508;
   --color-sage: #E8F0EC;
-  --color-sage-deep: #D1E0D8;
-  --color-cream: #FAFBF9;
-  --color-cream-dark: #F0F1EE;
-  --color-charcoal: #1A1A2E;
+  --color-sage-deep: #C8D9D0;
+  --color-cream: #F0F4F2;
+  --color-cream-dark: #E2E8E4;
+  --color-charcoal: #0F2E24;
   --color-slate: #4A5568;
-  --color-muted: #94A3B8;
+  --color-muted: #718096;
   --font-sans: var(--font-inter);
   --font-serif: var(--font-dm-serif);
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -33,4 +34,55 @@ body {
 ::selection {
   background: var(--color-sage-deep);
   color: var(--color-primary-dark);
+}
+
+/* Smooth scroll offset for fixed header */
+[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Button glow effect */
+.btn-glow {
+  position: relative;
+}
+.btn-glow::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent));
+  opacity: 0;
+  z-index: -1;
+  filter: blur(12px);
+  transition: opacity 0.3s ease;
+}
+.btn-glow:hover::after {
+  opacity: 0.4;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+.animate-float-delay {
+  animation: float 7s ease-in-out 2s infinite;
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 50%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

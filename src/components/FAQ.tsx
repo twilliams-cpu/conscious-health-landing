@@ -47,27 +47,41 @@ function FAQItem({
   answer,
   isOpen,
   onToggle,
+  index,
 }: {
   question: string;
   answer: string;
   isOpen: boolean;
   onToggle: () => void;
+  index: number;
 }) {
   return (
-    <div className="border-b border-sage-deep/50">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      className="border-b border-sage-deep/50"
+    >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-5 text-left"
+        className="w-full flex items-center justify-between py-5 text-left group"
       >
-        <span className="text-lg font-medium text-charcoal pr-4">
+        <span className="text-lg font-medium text-charcoal pr-4 group-hover:text-primary transition-colors">
           {question}
         </span>
-        <ChevronDown
-          size={20}
-          className={`flex-shrink-0 text-muted transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="flex-shrink-0"
+        >
+          <ChevronDown
+            size={20}
+            className={`transition-colors duration-200 ${
+              isOpen ? "text-primary" : "text-muted"
+            }`}
+          />
+        </motion.div>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -75,14 +89,14 @@ function FAQItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
             <p className="pb-5 text-slate leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 
@@ -107,12 +121,7 @@ export default function FAQ() {
           </h2>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
+        <div>
           {faqs.map((faq, i) => (
             <FAQItem
               key={i}
@@ -120,9 +129,10 @@ export default function FAQ() {
               answer={faq.answer}
               isOpen={openIndex === i}
               onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+              index={i}
             />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

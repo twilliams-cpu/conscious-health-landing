@@ -27,6 +27,22 @@ const steps = [
   },
 ];
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.2 },
+  },
+};
+
+const stepVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0, 0, 0.2, 1] as const },
+  },
+};
+
 export default function HowItWorks() {
   return (
     <section id="how-it-works" className="py-24 md:py-32">
@@ -50,25 +66,28 @@ export default function HowItWorks() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12"
+        >
           {steps.map((step, i) => (
             <motion.div
               key={step.number}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
+              variants={stepVariants}
               className="relative"
             >
               {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-12 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px bg-sage-deep" />
+                <div className="hidden md:block absolute top-12 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px bg-gradient-to-r from-sage-deep via-accent/30 to-sage-deep" />
               )}
-              <div className="flex flex-col items-center text-center">
+              <div className="flex flex-col items-center text-center group">
                 <div className="relative mb-6">
-                  <div className="w-24 h-24 rounded-2xl bg-white border-2 border-sage-deep flex items-center justify-center shadow-sm">
+                  <div className="w-24 h-24 rounded-2xl bg-white border-2 border-sage-deep flex items-center justify-center shadow-sm group-hover:border-primary/30 group-hover:shadow-md transition-all duration-300">
                     <step.icon size={32} className="text-primary" />
                   </div>
-                  <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-accent text-white text-sm font-bold flex items-center justify-center">
+                  <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-accent text-white text-sm font-bold flex items-center justify-center shadow-sm">
                     {step.number}
                   </span>
                 </div>
@@ -79,7 +98,7 @@ export default function HowItWorks() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
